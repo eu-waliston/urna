@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urna Eletrônica</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Tela 1: Bem-vindo -->
+    <div id="telaBemVindo" class="tela ativa">
+        <div class="container">
+            <div class="logo">
+                <h1>🗳️</h1>
+                <h2>Urna Eletrônica</h2>
+            </div>
+
+            <div class="formulario">
+                <h3>Identificação do Eleitor</h3>
+                <input type="text" id="nomeEleitor" placeholder="Digite sua matricula" maxlength="50">
+                <button onclick="iniciarVotacao()" class="btn-principal">Iniciar Votação</button>
+            </div>
+
+            <div class="info">
+                <p><strong>Instruções:</strong></p>
+                <ul>
+                    <li>Digite seu primeiro nome para identificar seu voto</li>
+                    <li>Cada pessoa pode votar apenas uma vez</li>
+                    <li>O sistema é seguro e anônimo</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela 2: Votação -->
+    <div id="telaVotacao" class="tela">
+        <div class="container">
+            <div class="header-votacao">
+                <div class="eleitor-info">
+                    <span>Matricula: <strong id="nomeEleitorAtual"></strong></span>
+                </div>
+                <h1>Urna Eletrônica</h1>
+                <div class="timer" id="timer">05:00</div>
+            </div>
+
+            <div class="area-voto">
+                <div class="opcoes-laterais">
+                    <button class="btn-lateral btn-branco" onclick="votarBranco()">
+                        <span class="icone">⚪</span>
+                        <span class="texto">Voto em Branco</span>
+                    </button>
+                </div>
+
+                <div class="voto-principal">
+                    <div class="chapa-info">
+                        <h2>RECONSTRUÇÃO E UNIÃO</h2>
+                        <p>Vote na chapa única</p>
+                    </div>
+                    <button class="btn-confirmar" onclick="votarChapa1()">
+                        CONFIRMAR VOTO
+                    </button>
+                </div>
+
+                <div class="opcoes-laterais">
+                    <button class="btn-lateral btn-nulo" onclick="votarNulo()">
+                        <span class="icone">❌</span>
+                        <span class="texto">Voto Nulo</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="instrucoes">
+                <p>Selecione uma das opções acima para confirmar seu voto</p>
+            </div>
+        </div>
+    </div>
+
+<!-- Tela 3: Confirmação -->
+<div id="telaConfirmacao" class="tela">
+    <div class="container confirmacao">
+        <div class="icone-confirmacao">✅</div>
+        <h1>Voto Registrado com Sucesso!</h1>
+        <p>Obrigado por exercer seu direito democrático.</p>
+
+        <div class="detalhes-voto">
+            <p><strong>Matrícula:</strong> <span id="matriculaConfirmacao"></span></p>
+            <p><strong>Voto:</strong> <span id="tipoVotoConfirmacao"></span></p>
+            <p><strong>Horário:</strong> <span id="horarioVoto"></span></p>
+            <p><strong>IP de Sessão:</strong> <span id="ipSessao"></span></p>
+            <p><strong>ID da Sessão:</strong> <span id="idSessao"></span></p>
+        </div>
+
+        <div class="info-validacao">
+            <p>💡 <strong>Informações para validação:</strong></p>
+            <p>Guarde estas informações caso precise validar seu voto posteriormente.</p>
+        </div>
+
+        <button onclick="voltarInicio()" class="btn-principal">Voltar ao Início</button>
+    </div>
+</div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
