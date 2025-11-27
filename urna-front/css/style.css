@@ -325,3 +325,420 @@ input[type="text"] {
 .contador-regressivo {
     display: none;
 }
+
+/* ===== ESTILOS ADMINISTRATIVOS ===== */
+
+/* Header Administrativo */
+.header-admin {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.header-admin h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+}
+
+.subtitulo {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* Controles Admin */
+.controles-admin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.btn-atualizar {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-atualizar:hover {
+    background: #2980b9;
+}
+
+.btn-voltar {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-voltar:hover {
+    background: #7f8c8d;
+}
+
+.hora-atualizacao {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Estatísticas Gerais */
+.estatisticas-gerais {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.estatistica-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-left: 5px solid;
+}
+
+.estatistica-card.total {
+    border-left-color: #3498db;
+}
+
+.estatistica-card.validos {
+    border-left-color: #27ae60;
+}
+
+.estatistica-card.brancos {
+    border-left-color: #f39c12;
+}
+
+.estatistica-card.nulos {
+    border-left-color: #e74c3c;
+}
+
+.estatistica-card h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.estatistica-card .numero {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Resultado Chapas */
+.resultado-chapas {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.resultado-chapas h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.lista-chapas {
+    display: grid;
+    gap: 15px;
+}
+
+.chapa-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+}
+
+.chapa-nome {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.chapa-votos {
+    background: #3498db;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+/* Gráfico de Distribuição */
+.grafico-distribuicao {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.grafico-distribuicao h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.barras-container {
+    display: grid;
+    gap: 20px;
+}
+
+.barra-item {
+    display: grid;
+    grid-template-columns: 100px 1fr 60px;
+    align-items: center;
+    gap: 15px;
+}
+
+.barra-label {
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: right;
+}
+
+.barra {
+    background: #ecf0f1;
+    height: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.barra-progresso {
+    height: 100%;
+    border-radius: 15px;
+    transition: width 1s ease-in-out;
+}
+
+.barra-progresso.chapa {
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+}
+
+.barra-progresso.branco {
+    background: linear-gradient(90deg, #f39c12, #f1c40f);
+}
+
+.barra-progresso.nulo {
+    background: linear-gradient(90deg, #e74c3c, #e67e22);
+}
+
+.barra-valor {
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+}
+
+/* Detalhes Avançados */
+.detalhes-avancados {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.detalhes-avancados h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.grid-detalhes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.detalhe-item {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.detalhe-item h4 {
+    color: #6c757d;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.detalhe-valor {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .controles-admin {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .estatisticas-gerais {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .barra-item {
+        grid-template-columns: 80px 1fr 50px;
+    }
+
+    .grid-detalhes {
+        grid-template-columns: 1fr;
+    }
+}
+
+.acesso-admin {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+.btn-admin {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.btn-admin:hover {
+    background: #5a6268;
+}
+
+/* ===== ESTILOS LOGIN ADMINISTRATIVO ===== */
+
+.formulario-admin {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.formulario-admin h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.info-admin {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+.campo-senha {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 300px;
+    margin: 0 auto 20px;
+}
+
+.campo-senha input[type="password"] {
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    text-align: center;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+}
+
+.campo-senha input[type="password"]:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.dica-senha {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 0;
+    color: #856404;
+}
+
+.dica-senha p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Remove o botão de acesso público da tela inicial */
+.acesso-admin {
+    display: none;
+}
+
+/* Info da Sessão */
+.info-sessao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.contador-sessao {
+    background: #e74c3c;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.btn-sair {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.btn-sair:hover {
+    background: #c0392b;
+}
+
+.acesso-admin-discreto {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.btn-admin-discreto {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+}
+
+.btn-admin-discreto:hover {
+    background: rgba(108, 117, 125, 0.2);
+    color: #495057;
+}

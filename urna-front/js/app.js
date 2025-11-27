@@ -1,51 +1,177 @@
 const API_URL = 'http://localhost:3000/api/votacao';
 
-class UrnaEletronica {
+// Configuração da senha administrativa
+const CONFIG_ADMIN = {
+    SENHA: "eleicao2024", // Senha padrão - pode ser alterada
+    TEMPO_SESSAO: 30 * 60 * 1000, // 30 minutos em milissegundos
+    TENTATIVAS_MAXIMAS: 3
+};
+
+class AutenticacaoAdmin {
     constructor() {
-        this.nomeEleitor = '';
-        this.tempoRestante = 300; // 5 minutos em segundos
-        this.timerInterval = null;
+        this.sessaoAtiva = false;
+        this.tempoExpiracao = null;
+        this.tentativas = 0;
+        this.bloqueado = false;
     }
 
-    // Mostrar tela específica
+    verificarSenha(senha) {
+        if (this.bloqueado) {
+            throw new Error('Acesso bloqueado. Muitas tentativas falhas.');
+        }
+
+        if (senha === CONFIG_ADMIN.SENHA) {
+            this.iniciarSessao();
+            this.tentativas = 0;
+            return true;
+        } else {
+            this.tentativas++;
+            if (this.tentativas >= CONFIG_ADMIN.TENTATIVAS_MAXIMAS) {
+                this.bloqueado = true;
+                setTimeout(() => {
+                    this.bloqueado = false;
+                    this.tentativas = 0;
+                }, 15 * 60 * 1000);
+                throw new Error('Acesso bloqueado por 15 minutos devido a múltiplas tentativas falhas.');
+            }
+            throw new Error(`Senha incorreta. Tentativas restantes: ${CONFIG_ADMIN.TENTATIVAS_MAXIMAS - this.tentativas}`);
+        }
+    }
+
+    iniciarSessao() {
+        this.sessaoAtiva = true;
+        this.tempoExpiracao = Date.now() + CONFIG_ADMIN.TEMPO_SESSAO;
+
+        setTimeout(() => {
+            this.encerrarSessao();
+            if (window.urna) {
+                window.urna.mostrarTela('telaBemVindo');
+                alert('Sessão administrativa expirada. Faça login novamente.');
+            }
+        }, CONFIG_ADMIN.TEMPO_SESSAO);
+    }
+
+    encerrarSessao() {
+        this.sessaoAtiva = false;
+        this.tempoExpiracao = null;
+    }
+
+    sessaoValida() {
+        if (!this.sessaoAtiva || !this.tempoExpiracao) {
+            return false;
+        }
+        return Date.now() < this.tempoExpiracao;
+    }
+
+    tempoRestante() {
+        if (!this.sessaoValida()) return 0;
+        return Math.max(0, this.tempoExpiracao - Date.now());
+    }
+
+    formatarTempoRestante() {
+        const tempo = this.tempoRestante();
+        if (tempo === 0) return 'Expirada';
+
+        const minutos = Math.floor(tempo / (60 * 1000));
+        const segundos = Math.floor((tempo % (60 * 1000)) / 1000);
+
+        return `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    }
+}
+
+class UrnaEletronica {
+    constructor() {
+        this.matriculaEstudante = '';
+        this.tempoRestante = 300;
+        this.timerInterval = null;
+        this.ipSessao = '';
+        this.idSessao = this.gerarIdSessao();
+        this.autenticacaoAdmin = new AutenticacaoAdmin();
+
+        this.inicializarEventListeners();
+    }
+
+    inicializarEventListeners() {
+        document.addEventListener('DOMContentLoaded', () => {
+            const matriculaInput = document.getElementById('matriculaEstudante');
+            if (matriculaInput) {
+                matriculaInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.iniciarVotacao();
+                    }
+                });
+            }
+
+            const senhaAdminInput = document.getElementById('senhaAdmin');
+            if (senhaAdminInput) {
+                senhaAdminInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.verificarSenhaAdmin();
+                    }
+                });
+            }
+        });
+    }
+
+    gerarIdSessao() {
+        return 'sessao_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    async obterIpSessao() {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (error) {
+            console.log('Não foi possível obter o IP, usando IP local');
+            return '127.0.0.1';
+        }
+    }
+
     mostrarTela(idTela) {
         document.querySelectorAll('.tela').forEach(tela => {
             tela.classList.remove('ativa');
         });
-        document.getElementById(idTela).classList.add('ativa');
+        const telaAlvo = document.getElementById(idTela);
+        if (telaAlvo) {
+            telaAlvo.classList.add('ativa');
+        }
     }
 
-    // Iniciar votação
-    iniciarVotacao() {
-        const nomeInput = document.getElementById('nomeEleitor');
-        const nome = nomeInput.value.trim();
-
-        if (!nome) {
-            alert('Por favor, digite seu primeiro nome para continuar.');
-            nomeInput.focus();
+    async iniciarVotacao() {
+        const matriculaInput = document.getElementById('matriculaEstudante');
+        if (!matriculaInput) {
+            console.error('Elemento matriculaEstudante não encontrado');
             return;
         }
 
-        if (nome.length < 2) {
-            alert('Por favor, digite um nome válido (mínimo 2 caracteres).');
-            nomeInput.focus();
+        const matricula = matriculaInput.value.trim();
+
+        if (!matricula) {
+            alert('Por favor, digite sua matrícula para continuar.');
+            matriculaInput.focus();
             return;
         }
 
-        this.nomeEleitor = nome;
+        if (matricula.length < 3) {
+            alert('Por favor, digite uma matrícula válida (mínimo 3 caracteres).');
+            matriculaInput.focus();
+            return;
+        }
 
-        // Atualizar nome nas telas
-        document.getElementById('nomeEleitorAtual').textContent = this.nomeEleitor;
-        document.getElementById('nomeEleitorConfirmacao').textContent = this.nomeEleitor;
+        this.matriculaEstudante = matricula;
+        this.ipSessao = await this.obterIpSessao();
 
-        // Iniciar timer
+        const matriculaAtual = document.getElementById('matriculaAtual');
+        const matriculaConfirmacao = document.getElementById('matriculaConfirmacao');
+
+        if (matriculaAtual) matriculaAtual.textContent = this.matriculaEstudante;
+        if (matriculaConfirmacao) matriculaConfirmacao.textContent = this.matriculaEstudante;
+
         this.iniciarTimer();
-
-        // Ir para tela de votação
         this.mostrarTela('telaVotacao');
     }
 
-    // Timer de 5 minutos
     iniciarTimer() {
         this.tempoRestante = 300;
         this.atualizarTimerDisplay();
@@ -61,10 +187,13 @@ class UrnaEletronica {
     }
 
     atualizarTimerDisplay() {
-        const minutos = Math.floor(this.tempoRestante / 60);
-        const segundos = this.tempoRestante % 60;
-        document.getElementById('timer').textContent =
-            `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            const minutos = Math.floor(this.tempoRestante / 60);
+            const segundos = this.tempoRestante % 60;
+            timerElement.textContent =
+                `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+        }
     }
 
     tempoEsgotado() {
@@ -73,7 +202,6 @@ class UrnaEletronica {
         this.voltarInicio();
     }
 
-    // Funções de voto
     async votarChapa1() {
         await this.registrarVoto('chapa', 'Chapa 1', null);
     }
@@ -86,12 +214,13 @@ class UrnaEletronica {
         await this.registrarVoto('nulo', null, 'nulo');
     }
 
-    // Registrar voto na API
     async registrarVoto(tipoVoto, chapa, valorVoto) {
         try {
             const votoData = {
                 tipoVoto: tipoVoto,
-                eleitorId: this.nomeEleitor.toLowerCase()
+                eleitorId: this.matriculaEstudante,
+                sessaoId: this.idSessao,
+                ipSessao: this.ipSessao
             };
 
             if (chapa) {
@@ -116,14 +245,13 @@ class UrnaEletronica {
                 throw new Error(data.message || 'Erro ao registrar voto');
             }
 
-            // Sucesso - mostrar tela de confirmação
             this.mostrarConfirmacao(tipoVoto, data);
 
         } catch (error) {
             console.error('Erro:', error);
 
             if (error.message.includes('já realizou seu voto')) {
-                alert('⚠️ Você já realizou seu voto! Cada pessoa pode votar apenas uma vez.');
+                alert('⚠️ Você já realizou seu voto! Cada estudante pode votar apenas uma vez.');
                 this.voltarInicio();
             } else {
                 alert('❌ Erro ao registrar voto: ' + error.message);
@@ -131,82 +259,253 @@ class UrnaEletronica {
         }
     }
 
-    // Mostrar tela de confirmação
     mostrarConfirmacao(tipoVoto, data) {
         clearInterval(this.timerInterval);
 
-        // Atualizar informações na tela de confirmação
         const tipoVotoTexto = {
             'chapa': 'Chapa 1',
             'branco': 'Branco',
             'nulo': 'Nulo'
         }[tipoVoto];
 
-        document.getElementById('tipoVotoConfirmacao').textContent = tipoVotoTexto;
-        document.getElementById('horarioVoto').textContent = new Date().toLocaleString('pt-BR');
+        const tipoVotoConfirmacao = document.getElementById('tipoVotoConfirmacao');
+        const horarioVoto = document.getElementById('horarioVoto');
+        const ipSessao = document.getElementById('ipSessao');
+        const idSessao = document.getElementById('idSessao');
+
+        if (tipoVotoConfirmacao) tipoVotoConfirmacao.textContent = tipoVotoTexto;
+        if (horarioVoto) horarioVoto.textContent = new Date().toLocaleString('pt-BR');
+        if (ipSessao) ipSessao.textContent = this.ipSessao;
+        if (idSessao) idSessao.textContent = this.idSessao;
 
         this.mostrarTela('telaConfirmacao');
-
-        // Iniciar contador regressivo para voltar ao início
-        this.iniciarContadorRegressivo();
     }
 
-    // Contador regressivo de 5 segundos
-    iniciarContadorRegressivo() {
-        let contador = 5;
-        const elementoContador = document.getElementById('contador');
-
-        const interval = setInterval(() => {
-            contador--;
-            elementoContador.textContent = contador;
-
-            if (contador <= 0) {
-                clearInterval(interval);
-                this.voltarInicio();
-            }
-        }, 1000);
-    }
-
-    // Voltar para tela inicial
     voltarInicio() {
         clearInterval(this.timerInterval);
-
-        // Limpar campos
-        this.nomeEleitor = '';
-        document.getElementById('nomeEleitor').value = '';
-
-        // Voltar para tela inicial
+        this.matriculaEstudante = '';
+        this.idSessao = this.gerarIdSessao();
+        const matriculaInput = document.getElementById('matriculaEstudante');
+        if (matriculaInput) matriculaInput.value = '';
         this.mostrarTela('telaBemVindo');
+    }
+
+    mostrarLoginAdmin() {
+        this.mostrarTela('telaLoginAdmin');
+        const senhaInput = document.getElementById('senhaAdmin');
+        if (senhaInput) senhaInput.value = '';
+    }
+
+    acessarResultadosAdmin() {
+        if (this.autenticacaoAdmin.sessaoValida()) {
+            this.mostrarTela('telaResultados');
+            this.carregarResultados();
+            this.iniciarTimerSessaoAdmin();
+        } else {
+            this.mostrarLoginAdmin();
+        }
+    }
+
+    iniciarTimerSessaoAdmin() {
+        const atualizarTempoSessao = () => {
+            if (this.autenticacaoAdmin.sessaoValida()) {
+                const tempoRestante = this.autenticacaoAdmin.formatarTempoRestante();
+                const elementoContador = document.getElementById('contadorSessao');
+                if (elementoContador) {
+                    elementoContador.textContent = `Sessão expira em: ${tempoRestante}`;
+                }
+            }
+        };
+
+        setInterval(atualizarTempoSessao, 1000);
+        atualizarTempoSessao();
+    }
+
+    async carregarResultados() {
+        try {
+            const response = await fetch(`${API_URL}/resultados`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Erro ao carregar resultados');
+            }
+
+            if (data.success) {
+                this.atualizarInterfaceResultados(data.data.resultados);
+                this.atualizarHoraAtualizacao();
+            }
+
+        } catch (error) {
+            console.error('Erro ao carregar resultados:', error);
+            alert('❌ Erro ao carregar resultados: ' + error.message);
+        }
+    }
+
+    atualizarInterfaceResultados(resultados) {
+        document.getElementById('totalGeral').textContent = resultados.totais.totalGeral;
+        document.getElementById('totalValidos').textContent = resultados.totais.votosValidos;
+        document.getElementById('totalBrancos').textContent = resultados.totais.brancos;
+        document.getElementById('totalNulos').textContent = resultados.totais.nulos;
+
+        const listaChapas = document.getElementById('listaChapas');
+        listaChapas.innerHTML = '';
+
+        if (resultados.chapas && resultados.chapas.length > 0) {
+            resultados.chapas.forEach(chapa => {
+                const chapaItem = document.createElement('div');
+                chapaItem.className = 'chapa-item';
+                chapaItem.innerHTML = `
+                    <span class="chapa-nome">${chapa.chapa}</span>
+                    <span class="chapa-votos">${chapa.totalVotos} votos</span>
+                `;
+                listaChapas.appendChild(chapaItem);
+            });
+        } else {
+            listaChapas.innerHTML = '<p style="text-align: center; color: #6c757d;">Nenhuma chapa recebeu votos</p>';
+        }
+
+        this.atualizarBarrasPercentuais(resultados.percentuais);
+        document.getElementById('participacao').textContent = resultados.percentuais.votosValidos || '0%';
+        document.getElementById('relacaoValidosBrancos').textContent =
+            this.calcularRelacaoValidosBrancos(resultados.totais.votosValidos, resultados.totais.brancos);
+    }
+
+    atualizarBarrasPercentuais(percentuais) {
+        const barraChapa = document.getElementById('barraChapa');
+        const barraBranco = document.getElementById('barraBranco');
+        const barraNulo = document.getElementById('barraNulo');
+
+        const valorChapa = document.getElementById('valorChapa');
+        const valorBranco = document.getElementById('valorBranco');
+        const valorNulo = document.getElementById('valorNulo');
+
+        const percentChapa = percentuais.votosValidos || '0';
+        const percentBranco = percentuais.brancos || '0';
+        const percentNulo = percentuais.nulos || '0';
+
+        barraChapa.style.width = percentChapa + '%';
+        barraBranco.style.width = percentBranco + '%';
+        barraNulo.style.width = percentNulo + '%';
+
+        valorChapa.textContent = percentChapa + '%';
+        valorBranco.textContent = percentBranco + '%';
+        valorNulo.textContent = percentNulo + '%';
+    }
+
+    calcularRelacaoValidosBrancos(validos, brancos) {
+        if (validos === 0) return '0%';
+        const total = validos + brancos;
+        const percentual = ((validos / total) * 100).toFixed(1);
+        return percentual + '%';
+    }
+
+    atualizarHoraAtualizacao() {
+        const agora = new Date();
+        const horaFormatada = agora.toLocaleString('pt-BR');
+        document.getElementById('horaAtualizacao').textContent = `Última atualização: ${horaFormatada}`;
+        document.getElementById('ultimaAtualizacao').textContent = horaFormatada;
+    }
+
+    verificarSenhaAdmin() {
+        const senhaInput = document.getElementById('senhaAdmin');
+        if (!senhaInput) return;
+
+        const senha = senhaInput.value.trim();
+
+        if (!senha) {
+            alert('Por favor, digite a senha de acesso.');
+            senhaInput.focus();
+            return;
+        }
+
+        try {
+            const sucesso = this.autenticacaoAdmin.verificarSenha(senha);
+
+            if (sucesso) {
+                this.mostrarTela('telaResultados');
+                this.carregarResultados();
+                this.iniciarTimerSessaoAdmin();
+            }
+        } catch (error) {
+            alert('❌ ' + error.message);
+            senhaInput.value = '';
+            senhaInput.focus();
+        }
+    }
+
+    sairAdmin() {
+        this.autenticacaoAdmin.encerrarSessao();
+        this.mostrarTela('telaBemVindo');
+        alert('Sessão administrativa encerrada.');
     }
 }
 
-// Inicializar a urna
-const urna = new UrnaEletronica();
+// Inicializar a urna quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    window.urna = new UrnaEletronica();
+});
 
-// Funções globais para os botões HTML
+// ===== FUNÇÕES GLOBAIS =====
+// Estas funções são chamadas pelos botões HTML
+
 function iniciarVotacao() {
-    urna.iniciarVotacao();
+    if (window.urna) {
+        window.urna.iniciarVotacao();
+    }
 }
 
 function votarChapa1() {
-    urna.votarChapa1();
+    if (window.urna) {
+        window.urna.votarChapa1();
+    }
 }
 
 function votarBranco() {
-    urna.votarBranco();
+    if (window.urna) {
+        window.urna.votarBranco();
+    }
 }
 
 function votarNulo() {
-    urna.votarNulo();
+    if (window.urna) {
+        window.urna.votarNulo();
+    }
 }
 
 function voltarInicio() {
-    urna.voltarInicio();
+    if (window.urna) {
+        window.urna.voltarInicio();
+    }
 }
 
-// Enter no campo de nome
-document.getElementById('nomeEleitor').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        iniciarVotacao();
+function acessarAreaAdmin() {
+    if (window.urna) {
+        window.urna.mostrarLoginAdmin();
     }
-});
+}
+
+function verificarSenhaAdmin() {
+    if (window.urna) {
+        window.urna.verificarSenhaAdmin();
+    }
+}
+
+function carregarResultados() {
+    if (window.urna) {
+        window.urna.carregarResultados();
+    }
+}
+
+function sairAdmin() {
+    if (window.urna) {
+        window.urna.sairAdmin();
+    }
+}
+
+// Atualização automática a cada 30 segundos
+setInterval(() => {
+    const telaResultados = document.getElementById('telaResultados');
+    if (telaResultados && telaResultados.classList.contains('ativa') && window.urna) {
+        window.urna.carregarResultados();
+    }
+}, 30000);

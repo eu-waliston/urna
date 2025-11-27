@@ -54,6 +54,14 @@ const votoSchema = new mongoose.Schema({
   ip: {
     type: String,
     required: true
+  },
+    sessaoId: {
+    type: String,
+    required: false
+  },
+  ipSessao: {
+    type: String,
+    required: false
   }
 }, {
   timestamps: true

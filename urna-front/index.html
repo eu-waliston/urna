@@ -1,104 +1,277 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Urna Eletrônica</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
     <!-- Tela 1: Bem-vindo -->
     <div id="telaBemVindo" class="tela ativa">
-        <div class="container">
-            <div class="logo">
-                <h1>🗳️</h1>
-                <h2>Urna Eletrônica</h2>
-            </div>
-
-            <div class="formulario">
-                <h3>Identificação do Eleitor</h3>
-                <input type="text" id="nomeEleitor" placeholder="Digite sua matricula" maxlength="50">
-                <button onclick="iniciarVotacao()" class="btn-principal">Iniciar Votação</button>
-            </div>
-
-            <div class="info">
-                <p><strong>Instruções:</strong></p>
-                <ul>
-                    <li>Digite seu primeiro nome para identificar seu voto</li>
-                    <li>Cada pessoa pode votar apenas uma vez</li>
-                    <li>O sistema é seguro e anônimo</li>
-                </ul>
-            </div>
+      <div class="container">
+        <div class="logo">
+          <h1>🗳️</h1>
+          <h2>Urna Eletrônica</h2>
         </div>
+
+        <div class="formulario">
+          <h3>Identificação do Estudante</h3>
+          <input
+            type="text"
+            id="matriculaEstudante"
+            placeholder="Digite sua matrícula"
+            maxlength="20"
+          />
+          <button onclick="iniciarVotacao()" class="btn-principal">
+            Iniciar Votação
+          </button>
+        </div>
+
+        <div class="info">
+          <p><strong>Instruções:</strong></p>
+          <ul>
+            <li>Digite sua matrícula para identificar seu voto</li>
+            <li>Cada estudante pode votar apenas uma vez</li>
+            <li>O sistema é seguro e anônimo</li>
+          </ul>
+        </div>
+
+        <div class="acesso-admin-discreto">
+          <button onclick="acessarAreaAdmin()" class="btn-admin-discreto">
+            ⚙️ Acesso Comissão
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Tela 2: Votação -->
     <div id="telaVotacao" class="tela">
-        <div class="container">
-            <div class="header-votacao">
-                <div class="eleitor-info">
-                    <span>Matricula: <strong id="nomeEleitorAtual"></strong></span>
-                </div>
-                <h1>Urna Eletrônica</h1>
-                <div class="timer" id="timer">05:00</div>
-            </div>
-
-            <div class="area-voto">
-                <div class="opcoes-laterais">
-                    <button class="btn-lateral btn-branco" onclick="votarBranco()">
-                        <span class="icone">⚪</span>
-                        <span class="texto">Voto em Branco</span>
-                    </button>
-                </div>
-
-                <div class="voto-principal">
-                    <div class="chapa-info">
-                        <h2>RECONSTRUÇÃO E UNIÃO</h2>
-                        <p>Vote na chapa única</p>
-                    </div>
-                    <button class="btn-confirmar" onclick="votarChapa1()">
-                        CONFIRMAR VOTO
-                    </button>
-                </div>
-
-                <div class="opcoes-laterais">
-                    <button class="btn-lateral btn-nulo" onclick="votarNulo()">
-                        <span class="icone">❌</span>
-                        <span class="texto">Voto Nulo</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="instrucoes">
-                <p>Selecione uma das opções acima para confirmar seu voto</p>
-            </div>
+      <div class="container">
+        <div class="header-votacao">
+          <div class="eleitor-info">
+            <span>Matrícula: <strong id="matriculaAtual"></strong></span>
+          </div>
+          <h1>Urna Eletrônica</h1>
+          <div class="timer" id="timer">05:00</div>
         </div>
+
+        <div class="area-voto">
+          <div class="opcoes-laterais">
+            <button class="btn-lateral btn-branco" onclick="votarBranco()">
+              <span class="icone">⚪</span>
+              <span class="texto">Voto em Branco</span>
+            </button>
+          </div>
+
+          <div class="voto-principal">
+            <div class="chapa-info">
+              <h2>CHAPA 1</h2>
+              <p>Vote na chapa única</p>
+            </div>
+            <button class="btn-confirmar" onclick="votarChapa1()">
+              CONFIRMAR VOTO
+            </button>
+          </div>
+
+          <div class="opcoes-laterais">
+            <button class="btn-lateral btn-nulo" onclick="votarNulo()">
+              <span class="icone">❌</span>
+              <span class="texto">Voto Nulo</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="instrucoes">
+          <p>Selecione uma das opções acima para confirmar seu voto</p>
+        </div>
+      </div>
     </div>
 
-<!-- Tela 3: Confirmação -->
-<div id="telaConfirmacao" class="tela">
-    <div class="container confirmacao">
+    <!-- Tela 3: Confirmação -->
+    <div id="telaConfirmacao" class="tela">
+      <div class="container confirmacao">
         <div class="icone-confirmacao">✅</div>
         <h1>Voto Registrado com Sucesso!</h1>
         <p>Obrigado por exercer seu direito democrático.</p>
 
         <div class="detalhes-voto">
-            <p><strong>Matrícula:</strong> <span id="matriculaConfirmacao"></span></p>
-            <p><strong>Voto:</strong> <span id="tipoVotoConfirmacao"></span></p>
-            <p><strong>Horário:</strong> <span id="horarioVoto"></span></p>
-            <p><strong>IP de Sessão:</strong> <span id="ipSessao"></span></p>
-            <p><strong>ID da Sessão:</strong> <span id="idSessao"></span></p>
+          <p>
+            <strong>Matrícula:</strong> <span id="matriculaConfirmacao"></span>
+          </p>
+          <p><strong>Voto:</strong> <span id="tipoVotoConfirmacao"></span></p>
+          <p><strong>Horário:</strong> <span id="horarioVoto"></span></p>
+          <p><strong>IP de Sessão:</strong> <span id="ipSessao"></span></p>
+          <p><strong>ID da Sessão:</strong> <span id="idSessao"></span></p>
         </div>
 
         <div class="info-validacao">
-            <p>💡 <strong>Informações para validação:</strong></p>
-            <p>Guarde estas informações caso precise validar seu voto posteriormente.</p>
+          <p>💡 <strong>Informações para validação:</strong></p>
+          <p>
+            Guarde estas informações caso precise validar seu voto
+            posteriormente.
+          </p>
         </div>
 
-        <button onclick="voltarInicio()" class="btn-principal">Voltar ao Início</button>
+        <button onclick="voltarInicio()" class="btn-principal">
+          Voltar ao Início
+        </button>
+      </div>
     </div>
-</div>
+
+    <!-- Tela 4: Resultados (Administrativa) -->
+    <div id="telaResultados" class="tela">
+      <div class="container">
+        <div class="header-admin">
+          <h1>📊 Resultados da Votação</h1>
+          <p class="subtitulo">Painel Administrativo - Comissão Eleitoral</p>
+        </div>
+
+        <div class="controles-admin">
+          <button onclick="carregarResultados()" class="btn-atualizar">
+            🔄 Atualizar Resultados
+          </button>
+          <button onclick="voltarInicio()" class="btn-voltar">
+            ← Voltar ao Início
+          </button>
+          <span class="hora-atualizacao" id="horaAtualizacao"></span>
+        </div>
+
+        <div class="estatisticas-gerais">
+          <div class="estatistica-card total">
+            <h3>Total de Votos</h3>
+            <div class="numero" id="totalGeral">0</div>
+          </div>
+          <div class="estatistica-card validos">
+            <h3>Votos Válidos</h3>
+            <div class="numero" id="totalValidos">0</div>
+          </div>
+          <div class="estatistica-card brancos">
+            <h3>Brancos</h3>
+            <div class="numero" id="totalBrancos">0</div>
+          </div>
+          <div class="estatistica-card nulos">
+            <h3>Nulos</h3>
+            <div class="numero" id="totalNulos">0</div>
+          </div>
+        </div>
+
+        <div class="resultado-chapas">
+          <h2>Resultado por Chapa</h2>
+          <div class="lista-chapas" id="listaChapas">
+            <!-- Chapas serão inseridas aqui via JavaScript -->
+          </div>
+        </div>
+
+        <div class="grafico-distribuicao">
+          <h2>Distribuição dos Votos</h2>
+          <div class="barras-container">
+            <div class="barra-item">
+              <span class="barra-label">Chapa 1</span>
+              <div class="barra">
+                <div
+                  class="barra-progresso chapa"
+                  id="barraChapa"
+                  style="width: 0%"
+                ></div>
+              </div>
+              <span class="barra-valor" id="valorChapa">0%</span>
+            </div>
+            <div class="barra-item">
+              <span class="barra-label">Brancos</span>
+              <div class="barra">
+                <div
+                  class="barra-progresso branco"
+                  id="barraBranco"
+                  style="width: 0%"
+                ></div>
+              </div>
+              <span class="barra-valor" id="valorBranco">0%</span>
+            </div>
+            <div class="barra-item">
+              <span class="barra-label">Nulos</span>
+              <div class="barra">
+                <div
+                  class="barra-progresso nulo"
+                  id="barraNulo"
+                  style="width: 0%"
+                ></div>
+              </div>
+              <span class="barra-valor" id="valorNulo">0%</span>
+            </div>
+          </div>
+
+          <div class="header-admin">
+            <h1>📊 Resultados da Votação</h1>
+            <p class="subtitulo">Painel Administrativo - Comissão Eleitoral</p>
+            <div class="info-sessao">
+              <span id="contadorSessao" class="contador-sessao"></span>
+              <button onclick="sairAdmin()" class="btn-sair">🚪 Sair</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="detalhes-avancados">
+          <h2>Detalhes Avançados</h2>
+          <div class="grid-detalhes">
+            <div class="detalhe-item">
+              <h4>Participação</h4>
+              <div class="detalhe-valor" id="participacao">0%</div>
+            </div>
+            <div class="detalhe-item">
+              <h4>Válidos/Brancos</h4>
+              <div class="detalhe-valor" id="relacaoValidosBrancos">0%</div>
+            </div>
+            <div class="detalhe-item">
+              <h4>Última Atualização</h4>
+              <div class="detalhe-valor" id="ultimaAtualizacao">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tela 5: Login Administrativo -->
+    <div id="telaLoginAdmin" class="tela">
+      <div class="container">
+        <div class="logo">
+          <h1>🔐</h1>
+          <h2>Acesso Administrativo</h2>
+        </div>
+
+        <div class="formulario-admin">
+          <h3>Comissão Eleitoral</h3>
+          <p class="info-admin">Acesso restrito à comissão eleitoral</p>
+
+          <div class="campo-senha">
+            <input
+              type="password"
+              id="senhaAdmin"
+              placeholder="Digite a senha de acesso"
+              maxlength="20"
+            />
+            <button onclick="verificarSenhaAdmin()" class="btn-principal">
+              Acessar
+            </button>
+          </div>
+
+          <div class="dica-senha">
+            <p>
+              💡
+              <em
+                >Entre em contato com o coordenador da eleição para obter a
+                senha</em
+              >
+            </p>
+          </div>
+
+          <button onclick="voltarInicio()" class="btn-voltar">
+            ← Voltar ao Início
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script src="js/app.js"></script>
-</body>
+  </body>
 </html>
