@@ -97,7 +97,40 @@ class UrnaEletronica {
 
             const matriculaInput = document.getElementById('matriculaEstudante');
             if (matriculaInput) {
+                // Evento keypress para bloquear letras durante a digitação
                 matriculaInput.addEventListener('keypress', (e) => {
+                    const charCode = e.which ? e.which : e.keyCode;
+
+                    // Permitir Enter para iniciar votação
+                    if (e.key === 'Enter') {
+                        this.iniciarVotacao();
+                        return;
+                    }
+
+                    // Permitir apenas teclas numéricas (0-9)
+                    if (charCode < 48 || charCode > 57) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    return true;
+                });
+
+                // Evento input para limpar qualquer caractere não numérico
+                matriculaInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                });
+
+                // Evento paste para bloquear colagem de texto não numérico
+                matriculaInput.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    // Pega apenas os números do texto colado
+                    const text = (e.clipboardData || window.clipboardData).getData('text');
+                    const numeros = text.replace(/\D/g, '');
+                    e.target.value = numeros;
+                });
+
+                // Evento keydown para Enter (backup)
+                matriculaInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         this.iniciarVotacao();
                     }
@@ -166,15 +199,18 @@ class UrnaEletronica {
 
         const matricula = matriculaInput.value.trim();
 
+        // Verificar se está vazio
         if (!matricula) {
             alert('Por favor, digite sua matrícula para continuar.');
             matriculaInput.focus();
             return;
         }
 
+        // Verificar tamanho: 9 ou 10 dígitos
         if (matricula.length < 9 || matricula.length > 10) {
-            alert('Por favor, digite uma matrícula válida.');
+            alert('A matrícula deve ter exatamente 9 ou 10 dígitos. Você digitou ' + matricula.length + ' dígitos.');
             matriculaInput.focus();
+            matriculaInput.select();
             return;
         }
 
@@ -584,11 +620,23 @@ function confirmarVotoChapa1() {
 }
 
 // Evento de tecla ESC global
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape' && window.urna) {
         window.urna.fecharModal();
     }
 });
+
+// Função para permitir apenas números no campo de matrícula
+function apenasNumeros(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+
+    // Permitir apenas teclas numéricas (0-9)
+    if (charCode < 48 || charCode > 57) {
+        event.preventDefault();
+        return false;
+    }
+    return true;
+}
 
 // Atualização automática a cada 30 segundos
 setInterval(() => {
@@ -599,7 +647,7 @@ setInterval(() => {
 }, 30000);
 
 // DEBUG: Verificar se o modal existe
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('=== VERIFICAÇÃO DO MODAL ===');
     const modal = document.getElementById('modalConfirmacao');
     console.log('Modal encontrado:', !!modal);

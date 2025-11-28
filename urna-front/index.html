@@ -20,8 +20,9 @@
           <input
             type="text"
             id="matriculaEstudante"
-            placeholder="Digite sua matrícula"
-            maxlength="20"
+            placeholder="Digite sua matrícula (9 ou 10 dígitos)"
+            maxlength="10"
+            onkeypress="return apenasNumeros(event)"
           />
           <button onclick="iniciarVotacao()" class="btn-principal">
             Iniciar Votação

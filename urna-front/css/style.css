@@ -916,3 +916,18 @@ input[type="text"] {
         font-size: 1.1rem;
     }
 }
+
+/* Estilo específico para campo de matrícula numérica */
+#matriculaEstudante {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Feedback visual para campo com dados */
+#matriculaEstudante:not(:placeholder-shown) {
+    background-color: #f8f9fa;
+    border-color: #667eea;
+}
