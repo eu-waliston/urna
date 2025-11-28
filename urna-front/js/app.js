@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/votacao';
+const API_URL = 'https://urna-dh2i.onrender.com/api/votacao';
 
 // Configuração da senha administrativa
 const CONFIG_ADMIN = {

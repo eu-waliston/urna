@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
 require('dotenv').config();
+const mongoose = require('mongoose');
 
 class Database {
   constructor() {
@@ -14,7 +14,7 @@ class Database {
         return this.connection;
       }
 
-      const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urna_eletronica';
+      const MONGODB_URI = process.env.DB_URL;
 
       console.log('🔄 Conectando ao MongoDB...');
 
