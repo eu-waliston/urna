@@ -27,7 +27,7 @@ class App {
 
     // CORS middleware
     this.app.use(cors({
-      origin: process.env.CORS_ORIGIN || '*',
+      origin: '*',
       methods: ['GET', 'POST'],
       allowedHeaders: ['Content-Type', 'Authorization']
     }));
