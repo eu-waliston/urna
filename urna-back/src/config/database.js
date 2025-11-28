@@ -14,7 +14,7 @@ class Database {
         return this.connection;
       }
 
-      const MONGODB_URI = process.env.DB_URL;
+      const MONGODB_URI = process.env.MONGODB_URI;
 
       console.log('🔄 Conectando ao MongoDB...');
 
