@@ -172,7 +172,7 @@ class UrnaEletronica {
             return;
         }
 
-        if (matricula.length < 9 || matricula.length > 9) {
+        if (matricula.length < 9 || matricula.length > 10) {
             alert('Por favor, digite uma matrícula válida.');
             matriculaInput.focus();
             return;
