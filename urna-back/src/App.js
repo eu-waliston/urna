@@ -27,7 +27,7 @@ class App {
 
     // CORS middleware
     this.app.use(cors({
-      origin: '*',
+      origin: process.env.CORS_ORIGIN || '*',
       methods: ['GET', 'POST'],
       allowedHeaders: ['Content-Type', 'Authorization']
     }));
@@ -88,7 +88,7 @@ class App {
   }
 
   initializeErrorHandling() {
-    // Middleware de erro
+    // Middleware de erro - CORRIGIDO
     this.app.use((err, req, res, next) => {
       console.error('💥 Erro não tratado:', err);
 
@@ -104,7 +104,7 @@ class App {
       res.status(err.status || 500).json(errorResponse);
     });
 
-    // Rota não encontrada
+    // Rota não encontrada - CORRIGIDO (forma simples)
     this.app.use((req, res) => {
       res.status(404).json({
         error: 'Rota não encontrada',
