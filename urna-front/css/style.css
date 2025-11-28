@@ -742,3 +742,177 @@ input[type="text"] {
     background: rgba(108, 117, 125, 0.2);
     color: #495057;
 }
+
+/* ===== ESTILOS DO MODAL ===== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 0;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.modal-close {
+    font-size: 2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.modal-close:hover {
+    transform: scale(1.2);
+}
+
+.modal-body {
+    padding: 30px 25px;
+    text-align: center;
+}
+
+.icone-confirmacao-modal {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.pergunta-confirmacao {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.aviso-confirmacao {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-bottom: 25px;
+    font-size: 1rem;
+}
+
+.detalhes-voto-modal {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.detalhes-voto-modal p {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.destaque-chapa {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 15px;
+    padding: 20px 25px;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-cancelar {
+    flex: 1;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-cancelar:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+.btn-confirmar-modal {
+    flex: 2;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-confirmar-modal:hover {
+    background: linear-gradient(135deg, #219a52, #27ae60);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+}
+
+/* Responsivo para mobile */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 5% auto;
+        width: 95%;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .pergunta-confirmacao {
+        font-size: 1.1rem;
+    }
+}

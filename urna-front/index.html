@@ -70,7 +70,7 @@
               <p>Vote na chapa única</p>
             </div>
             <button class="btn-confirmar" onclick="votarChapa1()">
-              CONFIRMAR VOTO
+              📋 VOTAR NA CHAPA 1
             </button>
           </div>
 
@@ -125,6 +125,10 @@
         <div class="header-admin">
           <h1>📊 Resultados da Votação</h1>
           <p class="subtitulo">Painel Administrativo - Comissão Eleitoral</p>
+          <div class="info-sessao">
+            <span id="contadorSessao" class="contador-sessao"></span>
+            <button onclick="sairAdmin()" class="btn-sair">🚪 Sair</button>
+          </div>
         </div>
 
         <div class="controles-admin">
@@ -200,15 +204,6 @@
               <span class="barra-valor" id="valorNulo">0%</span>
             </div>
           </div>
-
-          <div class="header-admin">
-            <h1>📊 Resultados da Votação</h1>
-            <p class="subtitulo">Painel Administrativo - Comissão Eleitoral</p>
-            <div class="info-sessao">
-              <span id="contadorSessao" class="contador-sessao"></span>
-              <button onclick="sairAdmin()" class="btn-sair">🚪 Sair</button>
-            </div>
-          </div>
         </div>
 
         <div class="detalhes-avancados">
@@ -267,6 +262,43 @@
 
           <button onclick="voltarInicio()" class="btn-voltar">
             ← Voltar ao Início
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="modalConfirmacao" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🗳️ Confirmar Voto</h2>
+          <span class="modal-close" onclick="fecharModal()">&times;</span>
+        </div>
+
+        <div class="modal-body">
+          <div class="icone-confirmacao-modal">⚠️</div>
+          <p class="pergunta-confirmacao">
+            Você tem certeza que deseja votar na <strong>CHAPA 1</strong>?
+          </p>
+          <p class="aviso-confirmacao">
+            Esta ação não poderá ser desfeita após a confirmação.
+          </p>
+
+          <div class="detalhes-voto-modal">
+            <p><strong>Matrícula:</strong> <span id="matriculaModal"></span></p>
+            <p>
+              <strong>Opção escolhida:</strong>
+              <span class="destaque-chapa">CHAPA 1</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button onclick="fecharModal()" class="btn-cancelar">
+            ❌ Cancelar
+          </button>
+          <button onclick="confirmarVotoChapa1()" class="btn-confirmar-modal">
+            ✅ Sim, Confirmar Voto
           </button>
         </div>
       </div>

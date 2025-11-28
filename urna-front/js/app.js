@@ -93,6 +93,8 @@ class UrnaEletronica {
 
     inicializarEventListeners() {
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM carregado - Inicializando event listeners');
+
             const matriculaInput = document.getElementById('matriculaEstudante');
             if (matriculaInput) {
                 matriculaInput.addEventListener('keypress', (e) => {
@@ -110,6 +112,23 @@ class UrnaEletronica {
                     }
                 });
             }
+
+            // Event listener para fechar modal clicando fora
+            const modal = document.getElementById('modalConfirmacao');
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        this.fecharModal();
+                    }
+                });
+            }
+
+            // Event listener para tecla ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.fecharModal();
+                }
+            });
         });
     }
 
@@ -202,8 +221,48 @@ class UrnaEletronica {
         this.voltarInicio();
     }
 
-    async votarChapa1() {
+    // MODAL FUNCTIONS - VERSÃO CORRIGIDA
+    mostrarModalConfirmacao() {
+        console.log('Tentando mostrar modal...');
+        const modal = document.getElementById('modalConfirmacao');
+        const matriculaModal = document.getElementById('matriculaModal');
+
+        if (!modal) {
+            console.error('Modal não encontrado!');
+            // Fallback: votar diretamente
+            this.registrarVoto('chapa', 'Chapa 1', null);
+            return;
+        }
+
+        if (!matriculaModal) {
+            console.error('Elemento matriculaModal não encontrado!');
+            return;
+        }
+
+        console.log('Matrícula atual:', this.matriculaEstudante);
+        matriculaModal.textContent = this.matriculaEstudante;
+        modal.style.display = 'block';
+        console.log('Modal deve estar visível agora');
+    }
+
+    fecharModal() {
+        console.log('Fechando modal...');
+        const modal = document.getElementById('modalConfirmacao');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    async confirmarVotoChapa1() {
+        console.log('Confirmando voto na Chapa 1...');
+        this.fecharModal();
         await this.registrarVoto('chapa', 'Chapa 1', null);
+    }
+
+    // MODIFICADA: Agora abre o modal em vez de votar diretamente
+    async votarChapa1() {
+        console.log('Clicou em votar Chapa 1 - Abrindo modal');
+        this.mostrarModalConfirmacao();
     }
 
     async votarBranco() {
@@ -441,22 +500,30 @@ class UrnaEletronica {
 }
 
 // Inicializar a urna quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('=== INICIALIZANDO SISTEMA DE URNA ===');
     window.urna = new UrnaEletronica();
+    console.log('Sistema de urna inicializado com sucesso!');
 });
 
 // ===== FUNÇÕES GLOBAIS =====
 // Estas funções são chamadas pelos botões HTML
 
 function iniciarVotacao() {
+    console.log('Função global iniciarVotacao chamada');
     if (window.urna) {
         window.urna.iniciarVotacao();
+    } else {
+        console.error('Urna não inicializada!');
     }
 }
 
 function votarChapa1() {
+    console.log('Função global votarChapa1 chamada');
     if (window.urna) {
         window.urna.votarChapa1();
+    } else {
+        console.error('Urna não inicializada!');
     }
 }
 
@@ -502,6 +569,27 @@ function sairAdmin() {
     }
 }
 
+function fecharModal() {
+    console.log('Função global fecharModal chamada');
+    if (window.urna) {
+        window.urna.fecharModal();
+    }
+}
+
+function confirmarVotoChapa1() {
+    console.log('Função global confirmarVotoChapa1 chamada');
+    if (window.urna) {
+        window.urna.confirmarVotoChapa1();
+    }
+}
+
+// Evento de tecla ESC global
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && window.urna) {
+        window.urna.fecharModal();
+    }
+});
+
 // Atualização automática a cada 30 segundos
 setInterval(() => {
     const telaResultados = document.getElementById('telaResultados');
@@ -509,3 +597,16 @@ setInterval(() => {
         window.urna.carregarResultados();
     }
 }, 30000);
+
+// DEBUG: Verificar se o modal existe
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== VERIFICAÇÃO DO MODAL ===');
+    const modal = document.getElementById('modalConfirmacao');
+    console.log('Modal encontrado:', !!modal);
+
+    if (modal) {
+        console.log('Modal está no DOM');
+    } else {
+        console.error('❌ Modal não encontrado no DOM!');
+    }
+});
